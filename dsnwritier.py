@@ -4,6 +4,7 @@ from dsn_rule import *
 from dsn_module import Component,Footprint, Padstack
 import dsn_module as module
 from dsn_net import *
+from dsn_geo import *
 
 class Parser(AST):
     tag = 'parser'
@@ -60,65 +61,6 @@ class Layer(AST):
         Layer.index_ctr+=1
         super(Layer,self).__init__(name=name,typex=typex,index=index)
 
-
-class Boundary(AST):
-    tag='boundary'
-    schema={
-        'path pcb':{
-            '0':{
-                '_parser':integer,
-                '_attr':'brd_index'
-            },
-            '1':{
-                '_parser': number,
-                '_attr': 'path'
-            },
-
-        }
-    }
-
-    index_ctr=0
-    def __init__(self,path,brd_index=None):
-        brd_index=Boundary.index_ctr
-        Boundary.index_ctr+=1
-
-        super(Boundary,self).__init__(path=path,brd_index=brd_index)
-
-class Keepout(AST):
-    tag='keepout'
-    schema={
-        '0':{
-            '0':{
-                '_parser':text,
-                '_attr':'name'
-            },
-
-            ' ':{
-                '0': {
-                    '_parser':text,
-                    '_attr':'shape'
-                },
-                '1':{
-                    '_parser':text,
-                    '_attr':'typex'
-                },
-                '2':{
-                    '_parser':integer,
-                    '_attr':'brd_index'
-                },
-                '3':{
-                    '_parser': number,
-                    '_attr':'path'
-                },
-            },
-        },
-    }
-    def __init__(self,path,name='\"\"',brd_index=0,shape='polygon',typex='signal'):
-
-        super(Keepout,self).__init__(path=path,name=name,brd_index=brd_index,shape=shape,typex=typex)
-
-
-
 class Dsn(AST):
     tag = 'PCB "kicad_board"'
     schema = {
@@ -148,7 +90,7 @@ class Dsn(AST):
                 '1':{
                     'boundary':{
                         '_parser':Boundary, 
-                        '_multiple':True
+                        '_multiple':False
                     },                    
                 },
                 '2':{
@@ -209,6 +151,12 @@ class Dsn(AST):
                     '_multiple':True
                 }
             }
+        },
+        '7':{
+            'wiring':{
+                '_parser':text,  #not available before auto-routing, code can be modificed if want to set route from script manually
+                
+            }
         }
 
 
@@ -228,7 +176,8 @@ class Dsn(AST):
         image=None,
         padstack=None,
         net=None,
-        netclass=None
+        netclass=None,
+        wiring= None
         ):
 
         layers=self.init_list(layers,[])
@@ -254,7 +203,8 @@ class Dsn(AST):
             image=image,
             padstack=padstack,
             net=net,
-            netclass=netclass
+            netclass=netclass,
+            wiring=wiring
             )
 
     def to_file(self, path):

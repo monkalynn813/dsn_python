@@ -5,6 +5,7 @@ from pykicad import pcb
 test=dsnwritier.Dsn()
 
 ###############################################################################
+###manually
 layers=[
     dsnwritier.Layer('F.Cu'),
     dsnwritier.Layer('B.Cu')
@@ -21,6 +22,7 @@ bdata=[137735, -31864.8,  165736, -31864.8,  165736, -113335,  137735, -113335,
             264.583, -31864.8,  78264.5, -31864.8,  78264.5, -264.632,  137735, -264.632,
             137735, -31864.8]
 
+
 kdata1=[138725, -221865,  138725, -244336,  150275, -244336,  150275, -221865,
             138725, -221865]
 kdata2=[98235.3, -224531,  98764.5, -224531,  98764.5, -219905,  103236, -224376,
@@ -31,14 +33,35 @@ kdata2=[98235.3, -224531,  98764.5, -224531,  98764.5, -219905,  103236, -224376
             98235.3, -224531]
 
 #######################################################################################
+###load from library
+# drawingclass=dsnwritier.load_drawing('/home/jingyan/Documents/summer_intern_lemur/roco_electrical/kicad_test.dxf')
+# bdata=drawingclass.load_polygon()[0]
+
+drawingclass=dsnwritier.load_drawing('/home/jingyan/Documents/summer_intern_lemur/roco_electrical/dsn_line_test.dxf')
+ddata=drawingclass.load_polygon()
+bdata=ddata[0]  #first element is boundary
+
+keepout=[] #load all the rest as outline 
+
+for i in range(1,len(ddata)):
+    kdata=dsnwritier.Keepout(ddata[i])
+    keepout.append(kdata)
+#######################################################################################
 parsers= dsnwritier.Parser()
 
 boundary=dsnwritier.Boundary(bdata)
-##############
+
+#############
 keepout=[
     dsnwritier.Keepout(kdata1),
     dsnwritier.Keepout(kdata2)]
-##############
+#############
+keepout=[] #load all the rest as outline 
+
+for i in range(1,len(ddata)):
+    kdata=dsnwritier.Keepout(ddata[i])
+    keepout.append(kdata)
+
 rule=dsnwritier.Rule()
 clearance=[
     dsnwritier.Clearance(200.1),
