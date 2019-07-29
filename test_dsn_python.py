@@ -34,22 +34,22 @@ kdata2=[98235.3, -224531,  98764.5, -224531,  98764.5, -219905,  103236, -224376
 parsers= dsnwritier.Parser()
 
 boundary=dsnwritier.Boundary(bdata)
-
+##############
 keepout=[
     dsnwritier.Keepout(kdata1),
     dsnwritier.Keepout(kdata2)]
-
+##############
 rule=dsnwritier.Rule()
 clearance=[
     dsnwritier.Clearance(200.1),
     dsnwritier.Clearance(200.1,'default_smd'),
     dsnwritier.Clearance(50,'smd_smd')]
 rule.clearance=clearance
-
+##########
 component=[dsnwritier.Component('U1',[103000,48000],name='"DEV"'),
           dsnwritier.Component('J1',[103000,48000],name='"DEV"')]
 
-
+###############
 image1_outline=[
     dsnwritier.module.Outline(width=120,outline_start=[-7620, 11430],outline_end=[7540, 11430]),
     dsnwritier.module.Outline(width=120,outline_start=[-7620, 11430],outline_end=[7540, -13570]),
@@ -62,13 +62,18 @@ image1_pin=[
 
 image1=dsnwritier.Footprint('U1',image1_outline,image1_pin)
 image=[image1]
-
+###############
 pin_shape1=[dsnwritier.module.Shape(layer='F.Cu'),
             dsnwritier.module.Shape(layer='B.Cu')]
 padstack1=dsnwritier.Padstack(shape=pin_shape1,attach='off')
 pin_shape2=[dsnwritier.module.Shape(layer='F.Cu',size=800),
             dsnwritier.module.Shape(layer='B.Cu',size=800)]
 padstack2=dsnwritier.Padstack(pin_type='"Via[0-1]_800:400_um"',shape=pin_shape2,attach='off')
+##############
+net1=dsnwritier.Net('3v3',conn_pins=['U1-3','J1-1'])
+net2=dsnwritier.Net('VIN',conn_pins='U1-1')
+netclass1=dsnwritier.NetClass(net_class_name='default',nets_name=['3v3','GND','VIN'],via_name='Via[0-1]_800:400_um')
+
 ########################################################################################
 test.parser=parsers
 test.layers=layers
@@ -78,5 +83,7 @@ test.rule=rule
 test.component=component
 test.image=image
 test.padstack=[padstack1,padstack2]
+test.net=[net1,net2]
+test.netclass=netclass1
 
 test.to_file('testdsn.dsn')

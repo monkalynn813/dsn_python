@@ -60,4 +60,15 @@
     (  circle F.Cu 800)) 
 (shape 
     (  circle B.Cu 800)) 
-    (attach off))))
+    (attach off))) 
+    (network 
+(net 3v3 
+    (pins U1-3 J1-1)) 
+(net VIN 
+    (pins U1-1)) 
+(class default 3v3 GND VIN 
+    (circuit 
+        (use_via Via[0-1]_800:400_um)) 
+    (rule 
+        (width 1000) 
+        (clearance 200.1000000000)))))

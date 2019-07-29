@@ -3,6 +3,7 @@ from pykicad.sexpr import *
 from dsn_rule import *
 from dsn_module import Component,Footprint, Padstack
 import dsn_module as module
+from dsn_net import *
 
 class Parser(AST):
     tag = 'parser'
@@ -196,6 +197,18 @@ class Dsn(AST):
                 }
 
             }
+        },
+        '6':{
+            'network':{
+                'net':{
+                    '_parser':Net,
+                    '_multiple':True
+                },
+                'netclass':{
+                    '_parser':NetClass,
+                    '_multiple':True
+                }
+            }
         }
 
 
@@ -213,7 +226,9 @@ class Dsn(AST):
         rule=None,
         component=None,
         image=None,
-        padstack=None
+        padstack=None,
+        net=None,
+        netclass=None
         ):
 
         layers=self.init_list(layers,[])
@@ -223,6 +238,8 @@ class Dsn(AST):
         component=self.init_list(component,[])
         image=self.init_list(image,[])
         padstack=self.init_list(padstack,[])
+        net=self.init_list(net,[])
+        net=self.init_list(netclass,[])
 
         super(Dsn,self).__init__(
             resolution=resolution,
@@ -235,7 +252,9 @@ class Dsn(AST):
             rule=rule,
             component=component,
             image=image,
-            padstack=padstack
+            padstack=padstack,
+            net=net,
+            netclass=netclass
             )
 
     def to_file(self, path):
