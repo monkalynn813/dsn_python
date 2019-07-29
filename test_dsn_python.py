@@ -63,6 +63,12 @@ image1_pin=[
 image1=dsnwritier.Footprint('U1',image1_outline,image1_pin)
 image=[image1]
 
+pin_shape1=[dsnwritier.module.Shape(layer='F.Cu'),
+            dsnwritier.module.Shape(layer='B.Cu')]
+padstack1=dsnwritier.Padstack(shape=pin_shape1,attach='off')
+pin_shape2=[dsnwritier.module.Shape(layer='F.Cu',size=800),
+            dsnwritier.module.Shape(layer='B.Cu',size=800)]
+padstack2=dsnwritier.Padstack(pin_type='"Via[0-1]_800:400_um"',shape=pin_shape2,attach='off')
 ########################################################################################
 test.parser=parsers
 test.layers=layers
@@ -71,5 +77,6 @@ test.keepout=keepout
 test.rule=rule
 test.component=component
 test.image=image
+test.padstack=[padstack1,padstack2]
 
 test.to_file('testdsn.dsn')

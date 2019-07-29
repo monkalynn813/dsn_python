@@ -80,6 +80,48 @@ class Pin(AST):
     def __init__(self,pin_index=None,pin_at=None,pin_type='Round[A]Pad_1524_um'):
         super(Pin,self).__init__(pin_type=pin_type,pin_index=pin_index,pin_at=pin_at)
 
+class Shape(AST):
+    tag='shape'
+    schema={
+        ' ':{
+            '0':{
+                '_parser': text,
+                '_attr':'shape'
+                
+            },
+            '1':{
+                '_parser': text,
+                '_attr':'layer'
+            },
+            '2':{
+                '_parser': integer,
+                '_attr': 'size'
+            }
+        }
+    }
+    def __init__(self,shape='circle',layer=None,size=1524):
+        super(Shape,self).__init__(shape=shape,layer=layer,size=size)
+class Padstack(AST):
+    tag='padstack'
+    schema={
+        '0':{
+            '_parser': text,
+            '_attr': 'pin_type'
+        },
+        '1':{
+            'shape':{
+                '_parser':Shape,
+                '_multiple':True
+            },
+        },
+
+        'attach':{
+            '_parser': text
+        }
+    }
+    def __init__(self,pin_type='Round[A]Pad_1524_um',shape=None,attach='off'):
+        shape=self.init_list(shape,[])
+        super(Padstack,self).__init__(pin_type=pin_type,shape=shape,attach=attach)
 
 class Footprint(AST):
     tag='image'

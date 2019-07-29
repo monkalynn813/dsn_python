@@ -48,5 +48,16 @@
 (outline 
     (path signal 120 -7620 -13570 -7620 11430)) 
 (pin Round[A]Pad_1524_um 1 -6350 10160) 
-(pin Round[A]Pad_1524_um 2 -6350 7620))
-))
+(pin Round[A]Pad_1524_um 2 -6350 7620)) 
+(padstack Round[A]Pad_1524_um 
+(shape 
+    (  circle F.Cu 1524)) 
+(shape 
+    (  circle B.Cu 1524)) 
+    (attach off)) 
+(padstack "Via[0-1]_800:400_um" 
+(shape 
+    (  circle F.Cu 800)) 
+(shape 
+    (  circle B.Cu 800)) 
+    (attach off))))

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pykicad.sexpr import *
 from dsn_rule import *
-from dsn_module import Component,Footprint
+from dsn_module import Component,Footprint, Padstack
 import dsn_module as module
 
 class Parser(AST):
@@ -187,12 +187,13 @@ class Dsn(AST):
                         '_parser': Footprint,
                         '_multiple': True
                     },
-                }
+                },
 
-                # 'padstack':{
-                #     '_parser':Padstack,
-                #     '_multiple': True
-                # }
+                '1':{
+                    '_parser':Padstack,
+                    '_multiple': True,
+                    '_attr':'padstack'
+                }
 
             }
         }
@@ -211,7 +212,8 @@ class Dsn(AST):
         via_txt='"Via[0-1]_800:400_um"',
         rule=None,
         component=None,
-        image=None
+        image=None,
+        padstack=None
         ):
 
         layers=self.init_list(layers,[])
@@ -220,7 +222,7 @@ class Dsn(AST):
         keepout=self.init_list(keepout,[])
         component=self.init_list(component,[])
         image=self.init_list(image,[])
-        
+        padstack=self.init_list(padstack,[])
 
         super(Dsn,self).__init__(
             resolution=resolution,
@@ -232,7 +234,8 @@ class Dsn(AST):
             via_txt=via_txt,
             rule=rule,
             component=component,
-            image=image
+            image=image,
+            padstack=padstack
             )
 
     def to_file(self, path):
