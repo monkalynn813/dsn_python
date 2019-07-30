@@ -69,11 +69,7 @@ class Boundary(AST):
         }
     }
 
-    index_ctr=0
-    def __init__(self,path,brd_index=None):
-        brd_index=Boundary.index_ctr
-        Boundary.index_ctr+=1
-
+    def __init__(self,path,brd_index=0):
         super(Boundary,self).__init__(path=path,brd_index=brd_index)
   
 

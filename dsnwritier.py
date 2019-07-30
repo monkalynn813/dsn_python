@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pykicad.sexpr import *
 from dsn_rule import *
-from dsn_module import Component,Footprint, Padstack
+from dsn_module import Placement,Footprint, Padstack
 import dsn_module as module
 from dsn_net import *
 from dsn_geo import *
@@ -102,7 +102,7 @@ class Dsn(AST):
                 '3':{
                     'via':{
                         '_parser': text,
-                        '_attr': 'via_txt'
+                        '_attr': 'via_type'
                     },
                 },
                 '4':{
@@ -116,8 +116,8 @@ class Dsn(AST):
         '4':{
             'placement':{
                 '0':{
-                    'component':{
-                        '_parser':Component,
+                    'placement':{
+                        '_parser':Placement,
                         '_multiple':True
                     },
                 },
@@ -170,9 +170,9 @@ class Dsn(AST):
         layers=None,
         boundary=None,
         keepout=None,
-        via_txt='"Via[0-1]_800:400_um"',
+        via_type=None,
         rule=None,
-        component=None,
+        placement=None,
         image=None,
         padstack=None,
         net=None,
@@ -184,7 +184,7 @@ class Dsn(AST):
         parser=self.init_list(parser,[])
         boundary=self.init_list(boundary,[])
         keepout=self.init_list(keepout,[])
-        component=self.init_list(component,[])
+        placement=self.init_list(placement,[])
         image=self.init_list(image,[])
         padstack=self.init_list(padstack,[])
         net=self.init_list(net,[])
@@ -197,9 +197,9 @@ class Dsn(AST):
             layers=layers,
             boundary=boundary,
             keepout=keepout,
-            via_txt=via_txt,
+            via_type=via_type,
             rule=rule,
-            component=component,
+            placement=placement,
             image=image,
             padstack=padstack,
             net=net,

@@ -3,7 +3,7 @@ from pykicad.sexpr import *
 
 unit_convert=1000
 
-class Component(AST):
+class Placement(AST):
     tag='component'
     schema={
         '0':{
@@ -34,10 +34,10 @@ class Component(AST):
             }
         }
     }  
-    def __init__(self,ref1,at,ref2=None,flip='front',orientation=0,name=None):
+    def __init__(self,ref1,at=[0,0],ref2=None,flip='front',orientation=0,name=None):
         at[1]=-at[1] #flip y for dsn
         ref2=ref1
-        super(Component,self).__init__(ref1=ref1,ref2=ref2,at=at,flip=flip,orientation=orientation,name=name)
+        super(Placement,self).__init__(ref1=ref1,ref2=ref2,at=at,flip=flip,orientation=orientation,name=name)
 
 class Outline(AST):
     tag='outline'
@@ -49,11 +49,11 @@ class Outline(AST):
                     '_attr':'width'
                 },
                 '1':{
-                    '_parser':number,
+                    '_parser':integer,
                     '_attr':'outline_start'
                 },
                 '2':{
-                    '_parser':number,
+                    '_parser':integer,
                     '_attr':'outline_end'
                 }
             }
@@ -124,7 +124,41 @@ class Padstack(AST):
     def __init__(self,pin_type='Round[A]Pad_1524_um',shape=None,attach='off'):
         shape=self.init_list(shape,[])
         super(Padstack,self).__init__(pin_type=pin_type,shape=shape,attach=attach)
+    
+    @classmethod
+    def auto_detect(cls,path,attach='off'):
+        """
+        load a module footprint file and auto detect pad info
+        output: padstack class
+        """
+        from pykicad.module import Module as mod 
+        import numpy as np
+        module=mod.from_file(path)
+        
+        pad_types=[]
+        for i in range(len(module.pads)):
+            pad=module.pads[i]
+            combo=[pad.shape,pad.layers,int(pad.size[0]*unit_convert)]
+            if not combo in pad_types:
+                pad_types.append(combo)
+        padstack=[]
+        for i in range(len(pad_types)):
+            shape_class=[]
+            for layer in pad_types[i][1]:
+                if '*' in layer:
+                    layer_ext=layer.split('.')[-1]
+                    shape_class.append(Shape(pad_types[i][0],'F.'+layer_ext,pad_types[i][2]))
+                    shape_class.append(Shape(pad_types[i][0],'B.'+layer_ext,pad_types[i][2]))
+                else:
+                    shape_class.append(shape_class=Shape(pad_types[i][0],layer,pad_types[i][2]))
+                
+            pin_type='Round[A]Pad_'+str(int(pad_types[i][2]))+'_um'
+            padstack_class=cls(pin_type,shape_class,attach)
+            padstack.append(padstack_class)
+        return padstack
 
+        
+            
 class Footprint(AST):
     tag='image'
     schema={
@@ -155,16 +189,22 @@ class Footprint(AST):
         load module footprint from a '.kicad_mod' file
         path: afile
         ref: ref name of module eg. U1
+        output: footprint class
         """
         from pykicad.module import Module as mod 
+        import numpy as np
         module=mod.from_file(path)
 
         outlines=[]
         for i in range(len(module.lines)):
             outline=module.lines[i]
-            width=outline.width
-            outline_start=outline.start 
-            outline_end=outline.end
+            width=outline.width*unit_convert
+            outline_start=np.array(outline.start)*unit_convert
+            outline_start[1]*=-1
+            outline_start=list(outline_start)
+            outline_end=np.array(outline.end)*unit_convert
+            outline_end[1]*=-1
+            outline_end=list(outline_end)
             outline_class=Outline(width,outline_start,outline_end)
             outlines.append(outline_class)
         
@@ -172,12 +212,14 @@ class Footprint(AST):
         for i in range(len(module.pads)):
             pad=module.pads[i]
             pin_index=int(pad.name)
-            pin_at=pad.at
+            pin_at=np.array(pad.at)*unit_convert
+            pin_at[1]*=-1
+            pin_at=list(pin_at)
             pin_size=pad.size[0]*unit_convert
-            pin_type='Round[A]Pad_'+str(pin_size)+'_um'
+            pin_type='Round[A]Pad_'+str(int(pin_size))+'_um'
             pin_class=Pin(pin_index,pin_at,pin_type)
             pads.append(pin_class)
-        cls(ref=ref,outline=outlines,pin=pads)
+        return cls(ref=ref,outline=outlines,pin=pads)
         
         
     

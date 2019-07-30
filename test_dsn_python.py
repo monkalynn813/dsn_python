@@ -93,11 +93,16 @@ for i in range(1,len(ddata)):
     kdata=dsnwritier.Keepout(ddata[i])
     keepout.append(kdata)
 
-
-
 ##########
-component=[dsnwritier.Component('U1',[103000,48000],name='"DEV"'),
-          dsnwritier.Component('J1',[103000,48000],name='"DEV"')]
+libpath='/home/jingyan/Documents/summer_intern_lemur/roco_electrical/libraries/kicad-ESP8266/ESP8266.pretty/'
+image=[dsnwritier.Footprint.from_file(libpath+'mpu-9250.kicad_mod',ref='J1'),
+       dsnwritier.Footprint.from_file(libpath+'ESP12F-Devkit-V3.kicad_mod',ref='U1')]
+
+padstack=dsnwritier.Padstack.auto_detect(libpath+'mpu-9250.kicad_mod')
+
+##########placement
+placement=[dsnwritier.Placement('U1',[103000,48000],orientation=90,name='"DEV"'),
+          dsnwritier.Placement('J1',[103000,48000],orientation=270,name='"DEV"')]
 
 
 ##############
@@ -111,9 +116,9 @@ test.layers=layers
 test.boundary=boundary
 test.keepout=keepout
 test.rule=rule
-test.component=component
+test.placement=placement
 test.image=image
-test.padstack=[padstack1,padstack2]
+test.padstack=padstack
 test.net=[net1,net2]
 test.netclass=netclass1
 
