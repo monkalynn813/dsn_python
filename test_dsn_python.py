@@ -5,13 +5,23 @@ from pykicad import pcb
 test=dsnwritier.Dsn()
 
 ###############################################################################
-###manually
+##General
 layers=[
     dsnwritier.Layer('F.Cu'),
     dsnwritier.Layer('B.Cu')
 ]
 
+parsers= dsnwritier.Parser()
 
+rule=dsnwritier.Rule()
+clearance=[
+    dsnwritier.Clearance(200.1),
+    dsnwritier.Clearance(200.1,'default_smd'),
+    dsnwritier.Clearance(50,'smd_smd')]
+rule.clearance=clearance
+
+###############################################################################
+###manually
 bdata=[137735, -31864.8,  165736, -31864.8,  165736, -113335,  137735, -113335,
             137735, -113864,  160735, -113864,  160735, -151336,  150736, -151336,
             150736, -151865,  160735, -151865,  160735, -211335,  150736, -211335,
@@ -32,45 +42,12 @@ kdata2=[98235.3, -224531,  98764.5, -224531,  98764.5, -219905,  103236, -224376
             103765, -224157,  103765, -224002,  103610, -224002,  98235.3, -218628,
             98235.3, -224531]
 
-#######################################################################################
-###load from library
-# drawingclass=dsnwritier.load_drawing('/home/jingyan/Documents/summer_intern_lemur/roco_electrical/kicad_test.dxf')
-# bdata=drawingclass.load_polygon()[0]
-
-drawingclass=dsnwritier.load_drawing('/home/jingyan/Documents/summer_intern_lemur/roco_electrical/dsn_line_test.dxf')
-ddata=drawingclass.load_polygon()
-bdata=ddata[0]  #first element is boundary
-
-keepout=[] #load all the rest as outline 
-
-for i in range(1,len(ddata)):
-    kdata=dsnwritier.Keepout(ddata[i])
-    keepout.append(kdata)
-#######################################################################################
-parsers= dsnwritier.Parser()
-
+#############
 boundary=dsnwritier.Boundary(bdata)
 
-#############
 keepout=[
     dsnwritier.Keepout(kdata1),
     dsnwritier.Keepout(kdata2)]
-#############
-keepout=[] #load all the rest as outline 
-
-for i in range(1,len(ddata)):
-    kdata=dsnwritier.Keepout(ddata[i])
-    keepout.append(kdata)
-
-rule=dsnwritier.Rule()
-clearance=[
-    dsnwritier.Clearance(200.1),
-    dsnwritier.Clearance(200.1,'default_smd'),
-    dsnwritier.Clearance(50,'smd_smd')]
-rule.clearance=clearance
-##########
-component=[dsnwritier.Component('U1',[103000,48000],name='"DEV"'),
-          dsnwritier.Component('J1',[103000,48000],name='"DEV"')]
 
 ###############
 image1_outline=[
@@ -92,6 +69,37 @@ padstack1=dsnwritier.Padstack(shape=pin_shape1,attach='off')
 pin_shape2=[dsnwritier.module.Shape(layer='F.Cu',size=800),
             dsnwritier.module.Shape(layer='B.Cu',size=800)]
 padstack2=dsnwritier.Padstack(pin_type='"Via[0-1]_800:400_um"',shape=pin_shape2,attach='off')
+#######################################################################################
+###load from library
+
+drawingclass=dsnwritier.load_drawing('/home/jingyan/Documents/summer_intern_lemur/roco_electrical/dsn_line_test.dxf')
+ddata=drawingclass.load_polygon()
+bdata=ddata[0]  #first element is boundary
+
+keepout=[] #load all the rest as outline 
+
+for i in range(1,len(ddata)):
+    kdata=dsnwritier.Keepout(ddata[i])
+    keepout.append(kdata)
+#######################################################################################
+
+#############
+boundary=dsnwritier.Boundary(bdata)
+
+#############
+keepout=[] #load all the rest as outline 
+
+for i in range(1,len(ddata)):
+    kdata=dsnwritier.Keepout(ddata[i])
+    keepout.append(kdata)
+
+
+
+##########
+component=[dsnwritier.Component('U1',[103000,48000],name='"DEV"'),
+          dsnwritier.Component('J1',[103000,48000],name='"DEV"')]
+
+
 ##############
 net1=dsnwritier.Net('3v3',conn_pins=['U1-3','J1-1'])
 net2=dsnwritier.Net('VIN',conn_pins='U1-1')

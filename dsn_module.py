@@ -1,6 +1,8 @@
 
 from pykicad.sexpr import *
 
+unit_convert=1000
+
 class Component(AST):
     tag='component'
     schema={
@@ -146,6 +148,38 @@ class Footprint(AST):
         pin=self.init_list(pin,[])
         super(Footprint,self).__init__(ref=ref,outline=outline,pin=pin)
 
+    
+    @classmethod
+    def from_file(cls,path,ref='REF**'):
+        """ 
+        load module footprint from a '.kicad_mod' file
+        path: afile
+        ref: ref name of module eg. U1
+        """
+        from pykicad.module import Module as mod 
+        module=mod.from_file(path)
+
+        outlines=[]
+        for i in range(len(module.lines)):
+            outline=module.lines[i]
+            width=outline.width
+            outline_start=outline.start 
+            outline_end=outline.end
+            outline_class=Outline(width,outline_start,outline_end)
+            outlines.append(outline_class)
+        
+        pads=[]
+        for i in range(len(module.pads)):
+            pad=module.pads[i]
+            pin_index=int(pad.name)
+            pin_at=pad.at
+            pin_size=pad.size[0]*unit_convert
+            pin_type='Round[A]Pad_'+str(pin_size)+'_um'
+            pin_class=Pin(pin_index,pin_at,pin_type)
+            pads.append(pin_class)
+        cls(ref=ref,outline=outlines,pin=pads)
+        
+        
+    
 
 
-# def load_module(file)
