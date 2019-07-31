@@ -51,7 +51,7 @@ class NetClass(AST):
         }
     }
     def __init__(self,net_class_name='default',nets_name=None,
-                via_name=None,width=1000,clearance=200.1):
+                via_name='',width=3000,clearance=200.1):
 
         super(NetClass,self).__init__(net_class_name=net_class_name,nets_name=nets_name,
                                     via_name=via_name,width=width,clearance=clearance)

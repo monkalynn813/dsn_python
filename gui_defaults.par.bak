@@ -4,7 +4,7 @@
     (board_frame
       visible
       (bounds
-        120 27 1150 916
+        351 29 1150 916
       )
     )
     (color_manager
@@ -22,7 +22,7 @@
     (object_visibility
       not_visible
       (bounds
-        0 550 395 396
+        0 550 405 396
       )
     )
     (display_miscellanious
@@ -136,7 +136,7 @@
   )
   (colors
     (background
-      255 255 255
+      204 204 204
     )
     (hilight 1.0
       230 255 255

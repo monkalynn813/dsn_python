@@ -16,13 +16,13 @@
     (layer_visibility
       not_visible
       (bounds
-        0 450 369 162
+        0 450 359 162
       )
     )
     (object_visibility
       not_visible
       (bounds
-        0 550 405 396
+        0 550 395 396
       )
     )
     (display_miscellanious
@@ -82,7 +82,7 @@
     (edit_vias
       not_visible
       (bounds
-        100 150 413 103
+        100 150 413 87
       )
     )
     (edit_net_rules
@@ -139,10 +139,10 @@
       204 204 204
     )
     (hilight 1.0
-      230 255 255
+      0 0 204
     )
     (incompletes 1.0
-      255 255 255
+      0 153 153
     )
     (outline
       0 0 0

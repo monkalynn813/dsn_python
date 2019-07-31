@@ -8,7 +8,9 @@ test=dsnwritier.Dsn()
 ##General
 layers=[
     dsnwritier.Layer('F.Cu'),
-    dsnwritier.Layer('B.Cu')
+    dsnwritier.Layer('B.Cu'),
+    dsnwritier.Layer('F.Mask'),
+    dsnwritier.Layer('B.Mask')
 ]
 
 parsers= dsnwritier.Parser()
@@ -76,13 +78,6 @@ drawingclass=dsnwritier.load_drawing('/home/jingyan/Documents/summer_intern_lemu
 ddata=drawingclass.load_polygon()
 bdata=ddata[0]  #first element is boundary
 
-keepout=[] #load all the rest as outline 
-
-for i in range(1,len(ddata)):
-    kdata=dsnwritier.Keepout(ddata[i])
-    keepout.append(kdata)
-#######################################################################################
-
 #############
 boundary=dsnwritier.Boundary(bdata)
 
@@ -95,20 +90,21 @@ for i in range(1,len(ddata)):
 
 ##########
 libpath='/home/jingyan/Documents/summer_intern_lemur/roco_electrical/libraries/kicad-ESP8266/ESP8266.pretty/'
+
 image=[dsnwritier.Footprint.from_file(libpath+'mpu-9250.kicad_mod',ref='J1'),
        dsnwritier.Footprint.from_file(libpath+'ESP12F-Devkit-V3.kicad_mod',ref='U1')]
 
-padstack=dsnwritier.Padstack.auto_detect(libpath+'mpu-9250.kicad_mod')
+padstack=dsnwritier.Padstack.auto_detect([libpath+'mpu-9250.kicad_mod',libpath+'ESP12F-Devkit-V3.kicad_mod'])
 
 ##########placement
 placement=[dsnwritier.Placement('U1',[103000,48000],orientation=90,name='"DEV"'),
-          dsnwritier.Placement('J1',[103000,48000],orientation=270,name='"DEV"')]
+          dsnwritier.Placement('J1',[103000,88000],orientation=270,name='"DEV"')]
 
 
 ##############
 net1=dsnwritier.Net('3v3',conn_pins=['U1-3','J1-1'])
 net2=dsnwritier.Net('VIN',conn_pins='U1-1')
-netclass1=dsnwritier.NetClass(net_class_name='default',nets_name=['3v3','GND','VIN'],via_name='Via[0-1]_800:400_um')
+netclass1=dsnwritier.NetClass(nets_name=[net1.net_name,'GND','VIN'])
 
 ########################################################################################
 test.parser=parsers

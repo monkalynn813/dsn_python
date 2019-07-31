@@ -133,11 +133,20 @@ class Padstack(AST):
         """
         from pykicad.module import Module as mod 
         import numpy as np
-        module=mod.from_file(path)
+        mod_pad_list=[]
         
+        if type(path)==list:
+            for file in path:
+                module=mod.from_file(file)
+                for eachpad in module.pads:
+                    mod_pad_list.append(eachpad)
+        else:
+            module=mod.from_file(path)
+            mod_pad_list=module.pads
+
         pad_types=[]
-        for i in range(len(module.pads)):
-            pad=module.pads[i]
+        for i in range(len(mod_pad_list)):
+            pad=mod_pad_list[i]
             combo=[pad.shape,pad.layers,int(pad.size[0]*unit_convert)]
             if not combo in pad_types:
                 pad_types.append(combo)
@@ -150,7 +159,7 @@ class Padstack(AST):
                     shape_class.append(Shape(pad_types[i][0],'F.'+layer_ext,pad_types[i][2]))
                     shape_class.append(Shape(pad_types[i][0],'B.'+layer_ext,pad_types[i][2]))
                 else:
-                    shape_class.append(shape_class=Shape(pad_types[i][0],layer,pad_types[i][2]))
+                    shape_class.append(Shape(pad_types[i][0],layer,pad_types[i][2]))
                 
             pin_type='Round[A]Pad_'+str(int(pad_types[i][2]))+'_um'
             padstack_class=cls(pin_type,shape_class,attach)

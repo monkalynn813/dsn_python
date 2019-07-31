@@ -16,8 +16,16 @@
     (type signal) 
     (property 
         (index 1))) 
+(layer F.Mask 
+    (type signal) 
+    (property 
+        (index 2))) 
+(layer B.Mask 
+    (type signal) 
+    (property 
+        (index 3))) 
 (boundary 
-    (path pcb 1 -26696.2760000000 -280310.9110000000 216684.7830000000 -280310.9110000000 216684.7830000000 19577.2840000000 -26696.2760000000 19577.2840000000)) 
+    (path pcb 0 -26696.2760000000 -280310.9110000000 216684.7830000000 -280310.9110000000 216684.7830000000 19577.2840000000 -26696.2760000000 19577.2840000000)) 
 (keepout "" 
     (  polygon signal 0 106000.2480000000 -113732.1160000000 106000.2480000000 -113467.5320000000 118999.9710000000 -113467.5320000000 118999.9710000000 -113732.1160000000)) 
 (keepout "" 
@@ -294,7 +302,7 @@
     (place U1 103000 -48000 front 90 
         (PN "DEV"))) 
 (component J1 
-    (place J1 103000 -48000 front 270 
+    (place J1 103000 -88000 front 270 
         (PN "DEV")))) 
     (library 
 (image J1 
@@ -380,6 +388,18 @@
     (  circle F.Mask 1524)) 
 (shape 
     (  circle B.Mask 1524)) 
+    (attach off)) 
+(padstack Round[A]Pad_1524_um 
+(shape 
+    (  circle F.Cu 1524)) 
+(shape 
+    (  circle B.Cu 1524)) 
+(shape 
+    (  circle F.Mask 1524)) 
+(shape 
+    (  circle B.Mask 1524)) 
+(shape 
+    (  circle F.SilkS 1524)) 
     (attach off))) 
     (network 
 (net 3v3 
@@ -388,7 +408,7 @@
     (pins U1-1)) 
 (class default 3v3 GND VIN 
     (circuit 
-        (use_via Via[0-1]_800:400_um)) 
+        (use_via "")) 
     (rule 
-        (width 1000) 
+        (width 3000) 
         (clearance 200.1000000000)))))
