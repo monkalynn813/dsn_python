@@ -212,4 +212,8 @@ class Dsn(AST):
             path += '.dsn'
         with open(path, 'w', encoding='utf-8') as f:
             f.write(self.to_string())     
+    # @classmethod
+    # def from_file(cls,path):
+    #     dsn=open(path,'r',encoding='utf-8').read()
+    #     return cls.parse(dsn)
 
